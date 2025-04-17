@@ -1,0 +1,14 @@
+{
+  "game_memory": [
+    "Ihno awakens in a dark forest. A mysterious figure approaches."
+  ],
+  "inventory": [
+    "torch"
+  ],
+  "stats": {
+    "health": 100,
+    "strength": 10,
+    "gold": 5
+  },
+  "difficulty": 1
+}
