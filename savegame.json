@@ -1,14 +1,1 @@
-{
-  "game_memory": [
-    "Ihno awakens in a dark forest. A mysterious figure approaches."
-  ],
-  "inventory": [
-    "torch"
-  ],
-  "stats": {
-    "health": 100,
-    "strength": 10,
-    "gold": 5
-  },
-  "difficulty": 1
-}
+{"context": "Ihno awakens in a dark forest. A mysterious figure approaches.", "game_memory": ["Ihno awakens in a dark forest. A mysterious figure approaches."], "player_stats": {"health": 100, "strength": 10, "gold": 5}, "inventory": ["torch", "wooden stick"], "difficulty": 2}
