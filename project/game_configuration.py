@@ -9,6 +9,31 @@ from globals_variables import *
 from item_stats import ( item_stat_boosts )
 
 
+# --- TRACK STAMINA LOSS DURING ACTIONS ---
+def handle_stamina_loss(action_type):
+    global player_stats
+    
+    if action_type in ["attack", "run", "defend", "dodge"]:
+        # Deduct stamina when attacking or running
+        stamina_cost = 10
+        player_stats["stamina"] = max(0, player_stats["stamina"] - stamina_cost)
+        return True
+    return False
+
+
+# --- REGENERATE STAMINA ---
+def regenerate_stamina():
+    global player_stats
+    max_stamina = player_stats.get("max_stamina", 100)
+    current_stamina = player_stats.get("stamina", 0)
+
+    if current_stamina < max_stamina:
+        # If the player is within 2 stamina points of max stamina, regenerate only what is needed.
+        if max_stamina - current_stamina <= 2:
+            player_stats["stamina"] = max_stamina
+        else:
+            player_stats["stamina"] = min(current_stamina + 5, max_stamina)
+
 
 # --- EQUIPMENT SLOT DETECTION ---
 def detect_equipment_slot(item_name):
@@ -301,6 +326,7 @@ def print_game_state():
 # --- GAME TURN ---
 def play_turn(player_input):
     global context
+
     if awaiting_stat_allocation:
         with output_area:
             clear_output()
@@ -313,6 +339,17 @@ def play_turn(player_input):
     if not player_input.strip():
         return
 
+    # Track stamina loss for actions like attack or run
+    if handle_stamina_loss("attack" if "attack" in player_input.lower() else "run" if "run" in player_input.lower() else ""):
+        with output_area:
+            clear_output()
+            print_game_state()
+            display(Markdown(f"💨 **You lose 10 stamina** from {player_input}."))
+    
+    # Regenerate stamina over time
+    regenerate_stamina()
+
+    # Proceed with the usual game turn flow (story generation, etc.)
     game_memory.append(f"{player_name}: {player_input}")
     recent_context = "\n".join(game_memory[-6:])
     raw_output = generate_story(recent_context, player_input, difficulty, player_stats, inventory, equipment)
