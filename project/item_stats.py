@@ -78,5 +78,7 @@ item_stat_boosts = {
     "crystal earring": {"intelligence": +3},
     "warrior's band": {"strength": +4},
     "shadow charm": {"intelligence": +2, "endurance": +2},
-    "sunstone brooch": {"strength": +2, "defense": +1}
+    "sunstone brooch": {"strength": +2, "defense": +1},
+    "elven locket": {"intelligence": +3, "endurance": +1, "magic": +2},
+    "tarnished silver ring": {"strength": +1, "defense": +1, "magic": +1},
 }
