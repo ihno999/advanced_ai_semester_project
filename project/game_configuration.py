@@ -278,9 +278,9 @@ def print_game_state():
         return item or "None"
 
     equipped_items = "\n".join([
-        f"- 🫱 Right Hand: {format_equipped(equipment['right_hand'])}",
-        f"- 🫲 Left Hand: {format_equipped(equipment['left_hand'])}",
-        f"- 🪖 Helmet: {format_equipped(equipment['helmet'])}",
+        f"- 🗡️ Right Hand: {format_equipped(equipment['right_hand'])}",
+        f"- 🔦 Left Hand: {format_equipped(equipment['left_hand'])}",
+        f"- ⛑️ Helmet: {format_equipped(equipment['helmet'])}",
         f"- 🛡️ Chestplate: {format_equipped(equipment['chestplate'])}",
         f"- 👖 Leggings: {format_equipped(equipment['leggings'])}",
         f"- 🥾 Boots: {format_equipped(equipment['boots'])}",
