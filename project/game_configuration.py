@@ -7,6 +7,7 @@ import ipywidgets as widgets
 from dotenv import load_dotenv
 from globals_variables import *
 from item_stats import ( item_stat_boosts )
+from magic_spells import magic_spells
 
 
 # --- TRACK STAMINA LOSS DURING ACTIONS ---
@@ -33,6 +34,35 @@ def regenerate_stamina():
             player_stats["stamina"] = max_stamina
         else:
             player_stats["stamina"] = min(current_stamina + 5, max_stamina)
+
+
+# --- CAST MAGIC SPELL ---
+def handle_spell_casting(player_input):
+    for spell_name in magic_spells:
+        if spell_name.lower() in player_input.lower():
+            spell = magic_spells[spell_name]
+            mana_cost = spell["mana_cost"]
+            if player_stats["mana"] >= mana_cost:
+                player_stats["mana"] -= mana_cost
+                return f"✨ **You cast _{spell_name}_**!\nEffect: {spell['effect']}\n🪄 Mana remaining: {player_stats['mana']}"
+            else:
+                return f"❌ Not enough mana to cast _{spell_name}_! You need {mana_cost}, but only have {player_stats['mana']}."
+    return None  # No spell found in input
+
+
+# --- REGENERATE MANA ---
+def regenerate_mana():
+    global player_stats
+    max_mana = player_stats.get("max_mana", 50)  # Default max_mana if not defined
+    current_mana = player_stats.get("mana", 0)
+
+    if current_mana < max_mana:
+        # If the player is within 2 mana points of max, regenerate only what is needed
+        if max_mana - current_mana <= 2:
+            player_stats["mana"] = max_mana
+        else:
+            player_stats["mana"] = min(current_mana + 2, max_mana)
+
 
 
 # --- EQUIPMENT SLOT DETECTION ---
@@ -332,24 +362,28 @@ def play_turn(player_input):
             clear_output()
             print_game_state()
             display(Markdown("⚠️ You must assign your unspent stat point(s) before continuing."))
-            display(input_box, submit_button)  # Ensuring the input box is displayed
+            display(input_box, submit_button)
             prompt_stat_allocation()
         return
 
     if not player_input.strip():
         return
 
-    # Track stamina loss for actions like attack or run
+    # Handle stamina loss
     if handle_stamina_loss("attack" if "attack" in player_input.lower() else "run" if "run" in player_input.lower() else ""):
         with output_area:
             clear_output()
             print_game_state()
             display(Markdown(f"💨 **You lose 10 stamina** from {player_input}."))
-    
-    # Regenerate stamina over time
-    regenerate_stamina()
 
-    # Proceed with the usual game turn flow (story generation, etc.)
+    # Handle spell casting
+    spell_result = handle_spell_casting(player_input)
+
+    # Regenerate mana and stamina at end of turn
+    regenerate_stamina()
+    regenerate_mana()
+
+    # Update game state
     game_memory.append(f"{player_name}: {player_input}")
     recent_context = "\n".join(game_memory[-6:])
     raw_output = generate_story(recent_context, player_input, difficulty, player_stats, inventory, equipment)
@@ -362,8 +396,11 @@ def play_turn(player_input):
     output_area.clear_output(wait=True)
     with output_area:
         print_game_state()
+        if spell_result:
+            display(Markdown(spell_result))
         display(Markdown("What does Ihno do next?"))
         display(input_box, submit_button)
+
 
 
 
