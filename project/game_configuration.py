@@ -384,13 +384,13 @@ def start_new_game(difficulty_choice):
 
     if difficulty_choice == "Easy":
         base_stats.update({"health": 200, "max_health": 200, "strength": 15})
-        inventory = ["torch", "wooden sword"]
+        inventory = ["Torch", "Wooden Sword"]
     elif difficulty_choice == "Medium":
         base_stats.update({"health": 100})
-        inventory = ["torch", "wooden stick"]
+        inventory = ["Torch", "Wooden Stick"]
     elif difficulty_choice == "Hard":
         base_stats.update({"health": 50})
-        inventory = ["torch"]
+        inventory = ["Torch"]
 
     base_stats["health"] = base_stats.get("health", base_stats["max_health"])
     base_stats["stamina"] = base_stats["max_stamina"]
