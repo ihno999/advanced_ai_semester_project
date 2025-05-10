@@ -10,6 +10,23 @@ from item_stats import ( item_stat_boosts )
 from magic_spells import magic_spells
 
 
+def print_available_spells(player_intelligence):
+    # Filter and collect spells the player can cast
+    available_spells = [
+        (name, details["mana_cost"])
+        for name, details in magic_spells.items()
+        if player_intelligence >= details["required_intelligence"]
+    ]
+
+    # Print the available spells
+    if available_spells:
+        for name, mana_cost in available_spells:
+            return f"- {name} (Mana Cost: {mana_cost})"
+    else:
+        return "No spells available with the current intelligence."
+
+
+
 # --- TRACK STAMINA LOSS DURING ACTIONS ---
 def handle_stamina_loss(action_type):
     global player_stats
@@ -373,6 +390,8 @@ def print_game_state():
         f"- 📌 Accessory 2: {format_equipped(equipment['accessory_2'])}",
     ])
 
+    spells = print_available_spells(intelligence)
+
     display(Markdown(f"### 📖 **Story so far**\n{context}"))
     display(Markdown(
         f"**🧍 {player_name}'s Inventory:** {inventory}  \n"
@@ -380,7 +399,8 @@ def print_game_state():
         f"**💪 Strength:** {strength}  |  **🛡 Defense:** {defense}  |  **🧠 Intelligence:** {intelligence}  |  **🦾 Endurance:** {endurance}  |  **✨ Magic:** {magic}  \n"
         f"**⭐ Level:** {level}  |  **🔹 XP:** {xp}  |  **💰 Gold:** {gold}  \n"
         f"🎯 Difficulty: {['Easy', 'Medium', 'Hard', 'Very Hard', 'Nightmare'][difficulty - 1]}\n\n"
-        f"### 🧰 **Equipped Gear:**\n{equipped_items}"
+        f"### 🧰 **Equipped Gear:**\n{equipped_items}\n\n"
+        f"### ✨ **Available Spells:**\n{spells}\n\n"
     ))
 
 # --- GAME TURN ---
