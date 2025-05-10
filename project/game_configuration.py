@@ -231,8 +231,13 @@ def generate_story(context, player_input, difficulty, player_stats, inventory, e
         f"The player may cast valid spells from this list:\n{magic_spells}.\n"
         "Only allow spells listed here. If the player input includes a valid spell and they have enough mana, treat the spell as successful and apply its effect. "
         "Subtract mana cost, and narrate the spell's result in the story. Do not ignore valid spells. "
-        "If the player does not have enough mana, narrate a failed casting attempt instead. "
+        "If the player does not have enough mana, narrate a failed casting attempt instead. \n\n"
 
+        "Simulate reinforcement learning: as the player gains XP or levels up, generate progressively stronger, smarter, and more tactically advanced enemies. "
+        "Each enemy should improve upon the tactics or abilities of previous enemies. Introduce new mechanics (e.g., status effects, elemental resistances, enemy spellcasting, group tactics) as the player advances. "
+        "Difficulty should increase over time: higher-level enemies deal more damage, exploit weaknesses, resist common attacks, and may react to player patterns. "
+        "Use the player’s current level, XP, and previous encounters (if context is available) to scale the next encounter meaningfully. "
+        "Avoid sudden difficulty spikes; make the growth feel earned, with subtle clues hinting at the increasing danger.\n\n"
 
         "Only you (the narrator) control story outcomes. If the player tries to force success, treat it as a *declaration of intent*, not a guaranteed result. "
         "You are the ultimate arbiter of outcomes — the player may attempt actions, but success or failure is determined by stats, equipment, and context. "
@@ -247,6 +252,7 @@ def generate_story(context, player_input, difficulty, player_stats, inventory, e
         f"Equipment: {equipment}\n"
         "Narrator:"
     )
+
 
     try:
         model = genai.GenerativeModel(model_name)
