@@ -38,15 +38,29 @@ def regenerate_stamina():
 
 # --- CAST MAGIC SPELL ---
 def handle_spell_casting(player_input):
-    for spell_name in magic_spells:
+    for spell_name, spell in magic_spells.items():
         if spell_name.lower() in player_input.lower():
-            spell = magic_spells[spell_name]
+            # Check intelligence requirement first
+            req_int = spell.get("required_intelligence", 0)
+            if player_stats.get("intelligence", 0) < req_int:
+                return (
+                    f"❌ You need at least {req_int} intelligence "  \
+                    f"to cast _{spell_name}_. You have {player_stats.get('intelligence', 0)}."
+                )
+            # Check mana next
             mana_cost = spell["mana_cost"]
-            if player_stats["mana"] >= mana_cost:
-                player_stats["mana"] -= mana_cost
-                return f"✨ **You cast _{spell_name}_**!\nEffect: {spell['effect']}\n🪄 Mana remaining: {player_stats['mana']}"
-            else:
-                return f"❌ Not enough mana to cast _{spell_name}_! You need {mana_cost}, but only have {player_stats['mana']}."
+            if player_stats["mana"] < mana_cost:
+                return (
+                    f"❌ Not enough mana to cast _{spell_name}_! "  \
+                    f"You need {mana_cost}, but only have {player_stats['mana']}."
+                )
+            # Deduct mana and cast
+            player_stats["mana"] -= mana_cost
+            return (
+                f"✨ **You cast _{spell_name}_**!\n"
+                f"Effect: {spell['effect']}\n"
+                f"🪄 Mana remaining: {player_stats['mana']}"
+            )
     return None  # No spell found in input
 
 
