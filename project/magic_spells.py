@@ -11,7 +11,7 @@ magic_spells = {
     },
     "Arcane Shield": {
         "mana_cost": 10,
-        "required_intelligence": 10,
+        "required_intelligence": 6,
         "effect": "Increases defense by +5 for 3 turns."
     },
     "Healing Light": {
@@ -36,7 +36,7 @@ magic_spells = {
     },
     "Drain Life": {
         "mana_cost": 9,
-        "required_intelligence": 4,
+        "required_intelligence": 5,
         "effect": "Deals 10 damage to an enemy and heals you for the same amount."
     },
     "Blink": {
