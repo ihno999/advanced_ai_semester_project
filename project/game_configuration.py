@@ -436,7 +436,7 @@ def print_game_state():
         f"**❤️ Health:** {health}  |  **🏃‍♂️ Stamina:** {stamina}  |  **🔮 Mana:** {mana}  \n"
         f"**💪 Strength:** {strength}  |  **🛡 Defense:** {defense}  |  **🧠 Intelligence:** {intelligence}  |  **🦾 Endurance:** {endurance}  |  **✨ Magic:** {magic}  \n"
         f"**⭐ Level:** {level}  |  **🔹 XP:** {xp}  |  **💰 Gold:** {gold}  \n"
-        f"🎯 Difficulty: {['Easy', 'Medium', 'Hard', 'Very Hard', 'Nightmare'][difficulty - 1]}\n\n"
+        f"🎯 Difficulty: {['Easy', 'Medium', 'Hard'][difficulty - 1]}\n\n"
         f"### 🧰 **Equipped Gear:**\n{equipped_items}\n\n"
         f"### ✨ **Available Spells:**\n{spells}\n\n"
     ))
@@ -553,13 +553,13 @@ def start_new_game(difficulty_choice):
     }
 
     if difficulty_choice == "Easy":
-        base_stats.update({"health": 200, "max_health": 200, "strength": 15})
+        base_stats.update({"health": 200, "max_health": 200, "strength": 15, "defense": 5, "mana": 50, "max_mana": 50, "stamina": 100, "max_stamina": 100})
         inventory = ["Torch", "Wooden Sword"]
     elif difficulty_choice == "Medium":
-        base_stats.update({"health": 100})
+        base_stats.update({"health": 100, "max_health": 100, "strength": 10, "defense": 2, "mana": 30, "max_mana": 30, "stamina": 80, "max_stamina": 80})
         inventory = ["Torch", "Wooden Stick"]
     elif difficulty_choice == "Hard":
-        base_stats.update({"health": 50})
+        base_stats.update({"health": 50, "max_health": 50, "strength": 5, "defense": 0, "mana": 10, "max_mana": 10, "stamina": 50, "max_stamina": 50})
         inventory = ["Torch"]
 
     base_stats["health"] = base_stats.get("health", base_stats["max_health"])
