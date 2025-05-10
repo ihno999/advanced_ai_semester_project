@@ -220,7 +220,7 @@ def generate_story(context, player_input, difficulty, player_stats, inventory, e
         "After the story, provide any game state updates (health, gold, inventory, xp) in this JSON format:\n"
         "`<META>{\"health\": -10, \"gold\": +5, \"xp\": 10, \"inventory_add\": [\"amulet\"], \"inventory_remove\": [\"torch\"], \"equip\": {\"right_hand\": \"iron sword\"}, \"unequip\": [\"helmet\"]}</META>`\n"
         "If no update is needed, just write `<META>{}</META>`.\n"
-        "All JSON keys and all string values must be enclosed in double quotes. Do not include trailing commas. "
+        "Always wrap game state updates in <META>...</META> tags. Do NOT output raw JSON outside of these tags."
         "The JSON must be syntactically valid — it should pass a JSON parser without error.\n"
         "You can only add items from this list: "
         f"{list(item_stat_boosts.keys())}.\n"
