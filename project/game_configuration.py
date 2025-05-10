@@ -28,6 +28,7 @@ def get_player_name():
             global player_name
             player_name = input_box.value  # Get the input value
             if player_name:
+                # Clear the input box and hide it
                 input_box.disabled = True
                 submit_button.disabled = True
                 input_box.layout.visibility = 'hidden'
@@ -37,8 +38,6 @@ def get_player_name():
                 print("Please enter a valid name.")
             input_box.disabled = True
             submit_button.disabled = True
-            # Call the print_game_state function to display game state
-            # print_game_state()
 
         submit_button.on_click(on_button_click)
 
@@ -70,7 +69,7 @@ def handle_stamina_loss(action_type):
     global player_stats
     
     if action_type in ["attack", "run", "defend", "dodge"]:
-        # Deduct stamina when attacking or running
+        # Deduct stamina when attacking, running, defending, or dodging
         stamina_cost = 10
         player_stats["stamina"] = max(0, player_stats["stamina"] - stamina_cost)
         return True
@@ -84,8 +83,8 @@ def regenerate_stamina():
     current_stamina = player_stats.get("stamina", 0)
 
     if current_stamina < max_stamina:
-        # If the player is within 2 stamina points of max stamina, regenerate only what is needed.
-        if max_stamina - current_stamina <= 2:
+        # If the player is within 5 stamina points of max stamina, regenerate only what is needed.
+        if max_stamina - current_stamina <= 5:
             player_stats["stamina"] = max_stamina
         else:
             player_stats["stamina"] = min(current_stamina + 5, max_stamina)
@@ -93,6 +92,7 @@ def regenerate_stamina():
 
 # --- CAST MAGIC SPELL ---
 def handle_spell_casting(player_input):
+    # Check if the player input contains a spell name
     for spell_name, spell in magic_spells.items():
         if spell_name.lower() in player_input.lower():
             # Check intelligence requirement first
@@ -116,13 +116,14 @@ def handle_spell_casting(player_input):
                 f"Effect: {spell['effect']}\n"
                 f"🪄 Mana remaining: {player_stats['mana']}"
             )
-    return None  # No spell found in input
+    # If no spell is found in the input
+    return None  
 
 
 # --- REGENERATE MANA ---
 def regenerate_mana():
     global player_stats
-    max_mana = player_stats.get("max_mana", 50)  # Default max_mana if not defined
+    max_mana = player_stats.get("max_mana", 50) 
     current_mana = player_stats.get("mana", 0)
 
     if current_mana < max_mana:
@@ -176,8 +177,9 @@ def detect_equipment_slot(item_name):
         elif not equipment["accessory_2"]:
             return "accessory_2"
         else:
-            return "accessory_1"  # Overwrite accessory_1 as fallback
-
+            # If both accessory slots are filled, overwrite the first one as fallback
+            return "accessory_1"  
+    # If no known slot is detected, return None
     return None
 
 
@@ -186,6 +188,7 @@ def calculate_total_stat(stat_name):
     base = player_stats.get(stat_name, 0)
     boost = 0
     for item in equipment.values():
+        # Check if the item is in the item_stat_boosts dictionary 
         if item and item in item_stat_boosts:
             boost += item_stat_boosts[item].get(stat_name, 0)
     return base + boost
@@ -194,6 +197,7 @@ def calculate_total_stat(stat_name):
 
 # --- XP AND LEVELING SYSTEM ---
 def xp_required(level):
+    # Calculate the XP required for the next level (15 XP more for each level)
     return 20 + (level - 1) * 15
 
 def check_level_up():
@@ -204,6 +208,7 @@ def check_level_up():
     leveled_up = False
     new_points = 0
 
+    # Check if the player has enough XP to level up, and level up if so
     while xp >= max_xp:
         xp -= max_xp
         level += 1
@@ -213,28 +218,32 @@ def check_level_up():
         max_xp = xp_required(level)
         leveled_up = True
 
+    # Update player stats
     player_stats["xp"] = xp
     player_stats["level"] = level
     player_stats["max_xp"] = max_xp
     player_stats["unassigned_stat_points"] = player_stats.get("unassigned_stat_points", 0) + new_points
 
+    # Check if the player has leveled up
     if leveled_up:
         awaiting_stat_allocation = True
+        # Display level-up message
         with output_area:
             clear_output()
             print_game_state()
             display(Markdown(f"🎉 **Level Up!** {player_name} reached level {level}!"))
-        # prompt_stat_allocation()
 
 
 # --- STAT ALLOCATION ---
 def prompt_stat_allocation():
     global awaiting_stat_allocation
     unassigned = player_stats.get("unassigned_stat_points", 0)
+    # Check if there are unassigned stat points
     if unassigned <= 0:
         awaiting_stat_allocation = False
         return
 
+    # Create widgets for stat allocation
     awaiting_stat_allocation = True
     options = ["Strength", "Defense", "Intelligence", "Endurance", "Magic"]
     stat_dropdown = widgets.Dropdown(options=options, description="Add to:")
@@ -254,33 +263,36 @@ def prompt_stat_allocation():
             player_stats["max_mana"] += 5
             player_stats["mana"] = player_stats["max_mana"]
 
+        # Update the unassigned stat points
         player_stats["unassigned_stat_points"] -= 1
 
         # Re-render the updated game state and hide the stat allocation options
         with output_area:
-            clear_output()  # Clear the current display
-            print_game_state()  # Re-render the game state with updated stats
+            clear_output()  
+            print_game_state()  
             display(Markdown(f"🧠 **Stat allocation complete!**"))
-            display(input_box, submit_button)  # Re-display the input and submit button
+            display(input_box, submit_button)  
             if player_stats["unassigned_stat_points"] > 0:
                 display(Markdown(f"🧠 You have **{player_stats['unassigned_stat_points']}** stat point(s) left!"))
-                display(stat_dropdown, confirm_button)  # Allow more allocation if points remain
+                display(stat_dropdown, confirm_button) 
             else:
-                awaiting_stat_allocation = False  # Mark allocation as complete
+                awaiting_stat_allocation = False 
 
     # Connect the button's click event to the `assign_stat` function
     confirm_button.on_click(assign_stat)
 
     # Create a separate page for stat allocation
     with output_area:
-        clear_output()  # Clear previous page
-        print_game_state()  # Optional: Display game context
+        clear_output()  
+        print_game_state()  
+        # Display the stat allocation message and options
         display(Markdown(f"🧠 You have **{unassigned}** unassigned stat point(s)! Choose a stat to upgrade:"))
-        display(stat_dropdown, confirm_button)  # Display stat allocation interface
+        display(stat_dropdown, confirm_button) 
 
 
 # --- STORY GENERATION ---
 def generate_story(context, player_input, difficulty, player_stats, inventory, equipment):
+    # prompt for the AI
     prompt = (
         "You are a fantasy dungeon-master AI. "
         "Continue the adventure in a vivid, immersive style. "
@@ -334,21 +346,27 @@ def generate_story(context, player_input, difficulty, player_stats, inventory, e
     except Exception as e:
         return f"❌ Error generating story: {e}"
 
+
+
 # --- META UPDATE PARSING ---
 def apply_meta_updates(text):
     global player_stats, inventory, equipment
 
+    # Extract the JSON part from the text
     meta_match = re.search(r"<META>(.*?)</META>", text, re.DOTALL)
     if not meta_match:
         return text
 
+    # Remove the <META> tags and keep the story part
     story_only = re.sub(r"<META>.*?</META>", "", text, flags=re.DOTALL).strip()
 
     try:
         updates = json.loads(meta_match.group(1))
+        # Apply updates to player stats, inventory, and equipment
         if "health" in updates:
             damage = updates["health"]
-            if damage < 0:  # Only apply defense reduction on damage taken
+            # Only apply defense reduction on damage taken
+            if damage < 0: 
                 defense = player_stats.get("defense", 0)
                 reduced_damage = int(damage * (1 - (defense * 0.03)))  # 3% reduction per defense point
                 player_stats["health"] = min(
@@ -388,16 +406,22 @@ def apply_meta_updates(text):
                     inventory.append(equipment[slot])
                     equipment[slot] = None
 
+
+    # Handle JSON parsing errors
     except json.JSONDecodeError:
         story_only += f"\n\n❌ Error parsing meta update: Invalid JSON format."
 
+    # Handle other exceptions
     except Exception as e:
         story_only += f"\n\n❌ Error parsing meta update: {e}"
 
     return story_only
 
+
+
 # --- GAME DISPLAY ---
 def print_game_state():
+    # get the current game state
     health = f"{player_stats.get('health', 0)}/{player_stats.get('max_health', 0)}"
     stamina = f"{player_stats.get('stamina', 0)}/{player_stats.get('max_stamina', 0)}"
     mana = f"{player_stats.get('mana', 0)}/{player_stats.get('max_mana', 0)}"
@@ -410,6 +434,8 @@ def print_game_state():
     level = player_stats.get('level', 1)
     gold = player_stats.get('gold', 0)
 
+
+    # Format inventory
     def format_equipped(item):
         if item and item in item_stat_boosts:
             boosts = item_stat_boosts[item]
@@ -417,6 +443,7 @@ def print_game_state():
             return f"{item} ({boost_str})"
         return item or "None"
 
+    # Format equipped items
     equipped_items = "\n".join([
         f"- 🗡️ Right Hand: {format_equipped(equipment['right_hand'])}",
         f"- 🔦 Left Hand: {format_equipped(equipment['left_hand'])}",
@@ -428,8 +455,11 @@ def print_game_state():
         f"- 📌 Accessory 2: {format_equipped(equipment['accessory_2'])}",
     ])
 
+    # Get available spells
     spells = print_available_spells(intelligence)
 
+
+    # Display the game state
     display(Markdown(f"### 📖 **Story so far**\n{context}"))
     display(Markdown(
         f"**🧍 {player_name}'s Inventory:** {inventory}  \n"
@@ -441,10 +471,14 @@ def print_game_state():
         f"### ✨ **Available Spells:**\n{spells}\n\n"
     ))
 
+
+
+
 # --- GAME TURN ---
 def play_turn(player_input):
     global context
 
+    # Check if the player has unassigned stat points
     if awaiting_stat_allocation:
         with output_area:
             clear_output()
@@ -454,11 +488,12 @@ def play_turn(player_input):
             prompt_stat_allocation()
         return
 
+    # Check if the player input is empty
     if not player_input.strip():
         return
 
     # Handle stamina loss
-    if handle_stamina_loss("attack" if "attack" in player_input.lower() else "run" if "run" in player_input.lower() else ""):
+    if handle_stamina_loss("attack" if "attack" in player_input.lower() else "run" if "run" in player_input.lower() else "defend" if "defend" in player_input.lower() else "dodge" if "dodge" in player_input.lower() else ""):
         with output_area:
             clear_output()
             print_game_state()
@@ -479,8 +514,10 @@ def play_turn(player_input):
     context_update = f"\n\n{cleaned_output}"
     context += context_update
     game_memory.append(cleaned_output)
+    # save the game state
     save_game()
 
+    # Print the game state
     output_area.clear_output(wait=True)
     with output_area:
         print_game_state()
@@ -496,6 +533,7 @@ def play_turn(player_input):
 
 # --- SAVE / LOAD / DELETE ---
 def save_game():
+    # Save the game state to a JSON file
     data = {
         "context": context,
         "game_memory": game_memory,
@@ -507,13 +545,17 @@ def save_game():
     with open(save_file, "w") as f:
         json.dump(data, f)
 
+
+
 def load_game():
     global context, game_memory, player_stats, inventory, difficulty, equipment
+    # Load the game state from a JSON file
     if not os.path.exists(save_file):
         with output_area:
             clear_output()
             display(Markdown("❌ No save file found!"))
         return
+    # load the game state
     with open(save_file, "r") as f:
         data = json.load(f)
     context = data["context"]
@@ -522,28 +564,36 @@ def load_game():
     inventory = data["inventory"]
     difficulty = data["difficulty"]
     equipment = data["equipment"]
+    # print the game state
     with output_area:
         clear_output()
         display(Markdown("✅ **Game loaded successfully!**"))
         print_game_state()
         display(input_box, submit_button)
 
+
 def delete_save():
+    # Delete the save file
     if os.path.exists(save_file):
         os.remove(save_file)
+    # If the file was deleted successfully, display a message
     with output_area:
         clear_output()
         display(Markdown("🗑️ Save file deleted."))
+
+
 
 # --- START NEW GAME ---
 def start_new_game(difficulty_choice):
     global context, player_stats, inventory, difficulty, game_memory, player_name
 
+    # Check if the player name is set
     if player_name is None:
         # Request player name if not set
         get_player_name()
         return
 
+    # Initialize game variables
     difficulty = {"Easy": 1, "Medium": 2, "Hard": 3}[difficulty_choice]
     base_stats = {
         "strength": 10, "defense": 0, "intelligence": 1, "endurance": 1, "magic": 1,
@@ -552,6 +602,7 @@ def start_new_game(difficulty_choice):
         "unassigned_stat_points": 0
     }
 
+    # Set base stats based on difficulty
     if difficulty_choice == "Easy":
         base_stats.update({"health": 200, "max_health": 200, "strength": 15, "defense": 5, "mana": 50, "max_mana": 50, "stamina": 100, "max_stamina": 100})
         inventory = ["Torch", "Wooden Sword"]
@@ -562,21 +613,28 @@ def start_new_game(difficulty_choice):
         base_stats.update({"health": 50, "max_health": 50, "strength": 5, "defense": 0, "mana": 10, "max_mana": 10, "stamina": 50, "max_stamina": 50})
         inventory = ["Torch"]
 
+    # Initialize player stats
     base_stats["health"] = base_stats.get("health", base_stats["max_health"])
     base_stats["stamina"] = base_stats["max_stamina"]
     base_stats["mana"] = base_stats["max_mana"]
     player_stats = base_stats
 
+    # Initialize inventory and equipment
     context = f"{player_name} awakens in a dark forest. A mysterious figure approaches."
     game_memory = [context]
     save_game()
+
+    # Clear the output area and display the new game state
     with output_area:
         clear_output()
         display(Markdown(f"**New game started on _{difficulty_choice}_ difficulty.**"))
         print_game_state()
         display(input_box, submit_button)
 
+
+
 # --- UI SETUP ---
+# create a text input box for player actions
 input_box = widgets.Text(
     placeholder=f"What does the player do next?",
     description="▶️ Action:",
@@ -585,9 +643,13 @@ input_box = widgets.Text(
 submit_button = widgets.Button(description="Submit", button_style='success')
 submit_button.on_click(lambda b: (play_turn(input_box.value), setattr(input_box, "value", "")))
 
+# Create an output area for displaying game state and messages
 output_area = widgets.Output()
 
+
+
 # --- GAME MENU ---
+# Create a dropdown for difficulty selection and buttons for game actions
 difficulty_dropdown = widgets.Dropdown(
     options=['Easy', 'Medium', 'Hard'],
     value='Medium',
@@ -598,6 +660,7 @@ start_button = widgets.Button(description="New Game", button_style='primary')
 load_button = widgets.Button(description="Load Game", button_style='info')
 delete_button = widgets.Button(description="Delete Save", button_style='danger')
 
+# on-click actions for the buttons
 start_button.on_click(lambda b: start_new_game(difficulty_dropdown.value))
 load_button.on_click(lambda b: load_game())
 delete_button.on_click(lambda b: delete_save())
