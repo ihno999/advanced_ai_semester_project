@@ -1,6 +1,6 @@
 # --- GLOBALS ---
 model_name = "gemini-2.0-flash"
-player_name = "Ihno"
+player_name = None
 context = ""
 game_memory = []
 player_stats = {}

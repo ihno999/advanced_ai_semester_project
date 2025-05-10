@@ -10,6 +10,44 @@ from item_stats import ( item_stat_boosts )
 from magic_spells import magic_spells
 
 
+# --- PlAYER NAME ---
+def get_player_name():
+    global player_name
+    if player_name is None:
+        # Create an input box widget for player name
+        input_box = widgets.Text(
+            description="Enter Name: ",
+            placeholder="Enter your character's name"
+        )
+
+        # Create a submit button
+        submit_button = widgets.Button(description="Confirm Name", button_style='success')
+
+        # Define the action for when the button is clicked
+        def on_button_click(b):
+            global player_name
+            player_name = input_box.value  # Get the input value
+            if player_name:
+                input_box.disabled = True
+                submit_button.disabled = True
+                input_box.layout.visibility = 'hidden'
+                submit_button.layout.visibility = 'hidden'
+                start_new_game(difficulty_dropdown.value)
+            else:
+                print("Please enter a valid name.")
+            input_box.disabled = True
+            submit_button.disabled = True
+            # Call the print_game_state function to display game state
+            # print_game_state()
+
+        submit_button.on_click(on_button_click)
+
+        display(input_box, submit_button)
+        
+    return player_name
+
+
+# --- AvAILABLE SPELLS ---
 def print_available_spells(player_intelligence):
     # Filter and collect spells the player can cast
     available_spells = [
@@ -499,7 +537,13 @@ def delete_save():
 
 # --- START NEW GAME ---
 def start_new_game(difficulty_choice):
-    global context, player_stats, inventory, difficulty, game_memory
+    global context, player_stats, inventory, difficulty, game_memory, player_name
+
+    if player_name is None:
+        # Request player name if not set
+        get_player_name()
+        return
+
     difficulty = {"Easy": 1, "Medium": 2, "Hard": 3}[difficulty_choice]
     base_stats = {
         "strength": 10, "defense": 0, "intelligence": 1, "endurance": 1, "magic": 1,
@@ -534,8 +578,8 @@ def start_new_game(difficulty_choice):
 
 # --- UI SETUP ---
 input_box = widgets.Text(
-    placeholder='What does Ihno do next?',
-    description='▶️ Action:',
+    placeholder=f"What does the player do next?",
+    description="▶️ Action:",
     layout=widgets.Layout(width='70%')
 )
 submit_button = widgets.Button(description="Submit", button_style='success')
