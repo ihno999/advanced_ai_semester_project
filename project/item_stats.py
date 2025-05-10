@@ -26,6 +26,7 @@ item_stat_boosts = {
     "Merlin's Wand": {"magic": +7, "endurance": +1, "intelligence": +3},
     "Shadow Blade": {"strength": +5, "intelligence": +2},
     "Arthur Pendragon's Sword": {"strength": +9, "defense": +2, "endurance": +1},
+    "Rusty Dagger": {"strength": +1, "endurance": +1, "defense": -1},
 
 
     # Helmet
