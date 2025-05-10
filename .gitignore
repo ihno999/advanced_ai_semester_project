@@ -3,6 +3,9 @@
 # important info
 /project/.env
 
+# python cache
+/project/__pycache__/
+
 
 
 # draft files en probeersels/testen
