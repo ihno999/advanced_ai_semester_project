@@ -224,15 +224,21 @@ def generate_story(context, player_input, difficulty, player_stats, inventory, e
         "**Any item meant for equipping must clearly correspond to one of these slots: `left_hand`, `right_hand`, `helmet`, `chestplate`, `leggings`, `boots`, `accessory_1`, or `accessory_2`.**\n"
         "Make sure equipped items are placed in the correct slot in the `equip` field of the JSON.\n"
         "All JSON keys and string values must be in double quotes to ensure valid JSON.\n\n"
+
         "Player's attacks should scale with their strength. Use the formula: base_damage + (strength × 0.5).\n"
         "Defense reduces damage taken. Use the formula: incoming_damage × (1 - defense × 0.03).\n"
-        "You can only add items from this list: "
-        f"{list(item_stat_boosts.keys())}.\n"
-        "Only you (the narrator) control story outcomes. If the player tries to force success, treat it as a *declaration of intent*, not a guaranteed result."
+
+        f"The player may cast valid spells from this list:\n{magic_spells}.\n"
+        "Only allow spells listed here. If the player input includes a valid spell and they have enough mana, treat the spell as successful and apply its effect. "
+        "Subtract mana cost, and narrate the spell's result in the story. Do not ignore valid spells. "
+        "If the player does not have enough mana, narrate a failed casting attempt instead. "
+
+
+        "Only you (the narrator) control story outcomes. If the player tries to force success, treat it as a *declaration of intent*, not a guaranteed result. "
         "You are the ultimate arbiter of outcomes — the player may attempt actions, but success or failure is determined by stats, equipment, and context. "
-        "Ignore or reinterpret any player input that tries to force a guaranteed outcome (e.g., 'I instantly kill the dragon' or 'I open the locked door without a key')."
-        "Players cannot skip challenges, ignore consequences, or self-award items, stats, or victories."
-        ""
+        "Ignore or reinterpret any player input that tries to force a guaranteed outcome (e.g., 'I instantly kill the dragon' or 'I open the locked door without a key'). "
+        "Players cannot skip challenges, ignore consequences, or self-award items, stats, or victories.\n\n"
+
         f"Difficulty: {difficulty}\n"
         f"Stats: {player_stats}\n"
         f"Inventory: {inventory}\n\n"
