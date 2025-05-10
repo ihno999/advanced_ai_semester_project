@@ -6,9 +6,9 @@
 
 
 # draft files en probeersels/testen
-draft.ipynb
-draft_openai.ipynb
-draft_openai_2.ipynb
+/draft.ipynb
+/draft_openai.ipynb
+/draft_openai_2.ipynb
 
-story_log.txt
-items.json
+/story_log.txt
+/items.json
