@@ -16,5 +16,5 @@ HOW TO RUN THE PROJECT:
 4. Make sure you have a .env file in the project folder with a variable named GOOGLE_API_KEY !!!
    This is an api key for a gemini-2.0-flash API endpoint.
    You can make an gemini-2.0-flash api key on this website: https://aistudio.google.com/apikey
-5. Make sure you have the required dependencies installed. There is a pip install in the first cell of the Dungeon_AI notebook. You need to run this.
+5. Make sure you have the required dependencies installed. There is a pip install in the first cell of the Dungeon_AI jupyter notebook. You need to run this.
 6. Run the second cell in the Dungeon_AI jupyter notebook to start the game.
